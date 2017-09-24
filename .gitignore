@@ -1,0 +1,7 @@
+# vagrant+ansible
+/.ansible-galaxy-roles
+/.vagrant
+
+# rust
+/target
+/Cargo.lock

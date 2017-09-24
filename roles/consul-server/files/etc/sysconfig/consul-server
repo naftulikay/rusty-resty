@@ -1,0 +1,6 @@
+# Default Environment for Consul Server
+CONSUL_NODE=localhost
+CONSUL_NODE_COUNT=1
+CONSUL_CONFIG_DIR=/etc/consul.d
+CONSUL_DATA_DIR=/srv/consul/localhost
+CONSUL_BIND_ADDRESS=127.0.0.1

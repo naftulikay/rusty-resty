@@ -1,0 +1,14 @@
+[Unit]
+Description=Consul Discovery Service
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=consul
+EnvironmentFile=/etc/sysconfig/consul-server
+ExecStart=/usr/local/bin/consul agent -server -bootstrap-expect=${CONSUL_NODE_COUNT} -data-dir=${CONSUL_DATA_DIR} \
+  -node=${CONSUL_NODE} -bind=${CONSUL_BIND_ADDRESS}
+
+[Install]
+WantedBy=multi-user.target

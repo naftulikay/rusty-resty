@@ -1,0 +1,6 @@
+[package]
+name = "rusty-resty"
+version = "0.1.0"
+authors = ["Naftuli Kay <me@naftuli.wtf>"]
+
+[dependencies]

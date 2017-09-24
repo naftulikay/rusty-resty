@@ -1,0 +1,11 @@
+---
+- name: configure vagrant
+  hosts: all
+  become: true
+  roles:
+    - role: vagrant-rust-dev
+    - role: consul-server
+    - role: openresty
+  tasks:
+    - name: be an adult
+      selinux: state=enforcing policy=targeted
