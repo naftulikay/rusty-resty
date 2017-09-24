@@ -3,8 +3,6 @@
 A [Vagrant][vagrant] environment for running a [Rust][rust] web application proxied by [OpenResty][openresty] with
 service discovery via [Consul][consul].
 
-## Scaling
-
 Horizontal scaling is easily possible by simply adding more instances of the Rust web-server. When used with, say, an
 Elastic Load Balancer, OpenResty can also scale horizontally.
 
@@ -15,7 +13,7 @@ Everything is implemented in Vagrant on a CentOS 7 VM.
 OpenResty is installed with a Consul Lua library for discovering backends. It uses `nginx.timer.at` to poll Consul for
 services every 10 seconds.
 
-The Rust web server written is using [Tokio][tokio], and will register itself with Consul upon start-up.
+The Rust web server uses [Tokio][tokio], and will register itself with Consul upon start-up.
 
 ## License
 

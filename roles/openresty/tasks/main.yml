@@ -1,1 +1,91 @@
 ---
+- name: install build packages
+  package: name="{{ item }}" state=present
+  with_items: "{{ openresty_build_packages }}"
+  become: true
+
+- name: install runtime packages
+  package: name="{{ item }}" state=present
+  with_items: "{{ openresty_runtime_packages }}"
+  become: true
+
+- name: download and extract openresty
+  unarchive:
+    src: "{{ openresty_download_url }}"
+    dest: /usr/local/src
+    creates: /usr/local/src/openresty-{{ openresty_version }}
+    remote_src: true
+  become: true
+
+- name: download and extract nchan
+  unarchive:
+    src: "{{ nchan_download_url }}"
+    dest: /usr/local/src
+    creates: /usr/local/src/nchan-{{ nchan_version }}
+    remote_src: true
+  become: true
+
+- name: compile and install openresty
+  script: build/compile.sh
+  args:
+    creates: /usr/sbin/nginx
+  environment:
+    NCHAN_VERSION: "{{ nchan_version }}"
+    OPENRESTY_VERSION: "{{ openresty_version }}"
+  become: true
+
+- name: create user
+  user:
+    name: nginx
+    system: true
+    shell: /usr/sbin/nologin
+    state: present
+  become: true
+
+- name: create directories
+  file: path="{{ item }}" mode="0755" owner=nginx group=nginx state=directory
+  with_items:
+    - /var/log/nginx
+    - /var/lib/nginx
+    - /var/lib/nginx/body
+    - /var/lib/nginx/fastcgi
+    - /var/lib/nginx/uwsgi
+    - /var/lib/nginx/scgi
+  become: true
+
+- name: install systemd unit
+  copy:
+    src: etc/systemd/openresty.service
+    dest: /etc/systemd/system/openresty.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: openresty_systemd_unit
+  become: true
+
+- name: install configuration file
+  copy:
+    src: etc/nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: nginx_conf_file
+  become: true
+
+- name: start service
+  systemd:
+    name: openresty.service
+    state: |-
+      {%- if openresty_systemd_unit | changed or nginx_conf_file | changed -%}
+        restarted
+      {%- else -%}
+        started
+      {%- endif -%}
+    enabled: true
+    daemon_reload: "{{ openresty_systemd_unit | changed }}"
+  become: true
+
+- name: install luarocks
+  package: name=luarocks state=present
+  become: true
