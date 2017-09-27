@@ -1,0 +1,22 @@
+[Unit]
+Description=OpenResty Web Server
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+# Check configuration validity before starting
+ExecStartPre=/usr/sbin/nginx -t
+# Just start it
+ExecStart=/usr/sbin/nginx
+# Send a HUP to NGINX to cause it to reload configuration
+ExecReload=/usr/bin/kill -HUP $MAINPID
+# Send a QUIT to NGINX to gracefully shut down
+ExecStop=/usr/bin/kill -QUIT $MAINPID
+# Limits
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+Alias=nginx.service
