@@ -1,0 +1,18 @@
+---
+- name: install dnsmasq
+  package: name=dnsmasq state=present
+  become: true
+
+- name: configure
+  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.conf owner=root group=root mode=0644
+  notify: restart dnsmasq
+  become: true
+
+- name: configure dhclient
+  template: src=dhclient.conf.j2 dest=/etc/dhclient.conf owner=root group=root mode=0644
+  notify: restart networkmanager
+  become: true
+
+- name: start dnsmasq
+  systemd: name=dnsmasq.service enabled=true state=started
+  become: true
