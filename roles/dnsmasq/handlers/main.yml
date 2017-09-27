@@ -1,0 +1,6 @@
+---
+- name: restart dnsmasq
+  service: name=dnsmasq.service state=restarted
+
+- name: restart networkmanager
+  service: name=NetworkManager state=restarted
