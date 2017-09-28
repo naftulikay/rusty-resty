@@ -1,6 +1,12 @@
 [package]
-name = "rusty-resty"
+name = "rusty"
 version = "0.1.0"
 authors = ["Naftuli Kay <me@naftuli.wtf>"]
 
 [dependencies]
+argparse = "0.2.*"
+consul = "0.1"
+backoff = "0.1.*"
+iron = "0.5.*"
+log = "0.3.*"
+log4rs = "0.7.*"
