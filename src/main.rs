@@ -42,7 +42,7 @@ fn launch(port: u16) {
     info!("Launching Iron...");
     Iron::new(|_: &mut Request| {
         Ok(Response::with((status::Ok, "{ message: \"Success!\" }")))
-    }).http(format!("localhost:{}", port)).unwrap();
+    }).http(format!("127.0.0.1:{}", port)).unwrap();
 }
 
 fn main() {
