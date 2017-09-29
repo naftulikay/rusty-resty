@@ -25,6 +25,7 @@ function .compile() {
       --with-stream \
       --with-threads \
       --with-pcre-jit \
+      --with-ipv6 \
       --with-http_v2_module \
       --with-http_realip_module \
       --with-http_stub_status_module \
