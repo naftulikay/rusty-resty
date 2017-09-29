@@ -1,5 +1,8 @@
 extern crate argparse;
+#[macro_use] extern crate chan;
+extern crate chan_signal;
 extern crate consul;
+extern crate hyper;
 extern crate iron;
 #[macro_use]
 extern crate log;
@@ -38,11 +41,26 @@ fn register_consul(port: u16) -> thread::JoinHandle<()> {
     }).unwrap() // returns a Result<JoinHandle<T>>
 }
 
+fn respond(_: &mut Request) -> IronResult<Response> {
+    debug!("Handling New Request");
+    Ok(Response::with((status::Ok, "{ message: \"Success!\" }")))
+}
+
 fn launch(port: u16) {
     info!("Launching Iron...");
-    Iron::new(|_: &mut Request| {
-        Ok(Response::with((status::Ok, "{ message: \"Success!\" }")))
-    }).http(format!("127.0.0.1:{}", port)).unwrap();
+
+    let signal = chan_signal::notify(&[
+        chan_signal::Signal::INT,
+        chan_signal::Signal::TERM
+    ]);
+
+    Iron::new(respond).http(format!("127.0.0.1:{}", port)).unwrap();
+
+    signal.recv().and_then(|_: chan_signal::Signal| {
+        info!("Deregistering Consul...");
+        discovery::deregister(port);
+        Some(())
+    });
 }
 
 fn main() {
